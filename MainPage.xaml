@@ -9,10 +9,12 @@
             Spacing="25">
 
             <Label
+                x:Name="Head"
                 Text="Kurs NBP"
                 Style="{StaticResource Headline}"
                 SemanticProperties.HeadingLevel="Level1" />
-
+            <DatePicker
+                x:Name="Date"/>
             <Button
                 x:Name="EUR"
                 Text="EUR" 
@@ -23,6 +25,8 @@
                 Text="USD" 
                 Clicked="UsClicked"
                 HorizontalOptions="Fill" />
+            <Label
+                x:Name="KursUsd"/>
         </VerticalStackLayout>
     </ScrollView>
 
