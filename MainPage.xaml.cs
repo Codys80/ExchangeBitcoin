@@ -22,46 +22,45 @@ namespace waluty
     }
     public partial class MainPage : ContentPage
     {
-        string waluta;
-        /*************************************************************************************************************
-        // nazwa funkcji:       MainPage
-        // parametry wejściowe: brak
-        // wartość zwracana:    brak
-        // informacje:          funkcja inicjuje elementy graficznego interfejsu użytkownika oraz ustala maksymalną datę
-        //                      uniemożliwiając błędne pobranie api z nieistniejącego dnia
-        // autor:               Bartosz Semczuk
-        ***************************************************************************************************************/
+        string waluta, compare;
+       
         public MainPage()
         {
             InitializeComponent();
             DateTime dzis =DateTime.Now;
             Date.MaximumDate = dzis;
         }
-        /*************************************************************************************************************
-        // nazwa funkcji:       EurClicked
-        // parametry wejściowe: obiekt wywołujący funkcje
-        // wartość zwracana:    brak, funkcja typu void
-        // informacje:          funkcja pobiera kod waluty wprowadzony przez użytkownika końcowego w polu entry po 
-        //                      przez naciśnięcie przycisku, pobiera informacje o walucie z oficjalnej strony NBP 
-        //                      i wyświetla informacje o niej
-        // autor:               Bartosz Semczuk
-        ***************************************************************************************************************/
         private void EurClicked(object sender, EventArgs e)
         {
             waluta = EntryValue.Text;
+            compare = EntryValueToCompare.Text;
+            double value = double.Parse(Value.Text);
             string dateToday = Date.Date.ToString("yyyy-MM-dd");
             string url = $"https://api.nbp.pl/api/exchangerates/rates/c/{waluta}/{dateToday}/?format=json";
-            string json;
+            string json1, json2;
+            
             using (var webClient = new WebClient())
             {
-                json = webClient.DownloadString(url);
+                json1 = webClient.DownloadString(url);
             }
-            Currency c = JsonSerializer.Deserialize<Currency>(json);
-            string s = $"Nazwa waluty: {c.currency} \n"; ;
-            s += $"Kod waluty: {c.code}\n";
-            s += $"Date: {c.rates[0].effectiveDate}\n";
-            s += $"Cena Skupu: {c.rates[0].bid} zł\n";
-            s += $"Cena sprzedaży: {c.rates[0].ask} zł\n";
+            url = $"https://api.nbp.pl/api/exchangerates/rates/c/{compare}/{dateToday}/?format=json";
+            using (var webClient = new WebClient())
+            {
+                json2 = webClient.DownloadString(url);
+            }
+            Currency c = JsonSerializer.Deserialize<Currency>(json1);
+            Currency cc = JsonSerializer.Deserialize<Currency>(json2);
+            double exchangeRate;
+            exchangeRate = Convert.ToDouble(c.rates[0].bid)/ Convert.ToDouble(cc.rates[0].bid);
+            value *= exchangeRate;
+            string s = $"Nazwa wymiany: {c.currency} / {cc.currency} \n"; 
+            s += $"Wartość: ${value}";
+            //s += $"Kod waluty: {c.code}\n";
+            //s += $"Date: {c.rates[0].effectiveDate}\n";
+            //s += $"Cena Skupu: {c.rates[0].bid - cc.rates[0].bid} zł\n";
+            //s += $"Cena sprzedaży: {c.rates[0].ask - cc.rates[0].ask} zł\n";
+
+
             Head.Text = s;
         }
     }

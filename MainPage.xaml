@@ -21,9 +21,13 @@
                 Clicked="EurClicked"
                 HorizontalOptions="Fill" />
             <Entry
-                x:Name="EntryValue"/>
-            <Label
-                x:Name="KursUsd"/>
+                x:Name="EntryValue"
+                Placeholder="Nazwa waluty"/>
+            <Entry
+                x:Name="EntryValueToCompare"
+                Placeholder="Nazwa waluty"/>
+            <Entry x:Name="Value"
+                   Placeholder="wartość"/>
         </VerticalStackLayout>
     </ScrollView>
 
