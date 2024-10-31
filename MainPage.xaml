@@ -17,14 +17,11 @@
                 x:Name="Date"/>
             <Button
                 x:Name="EUR"
-                Text="EUR" 
+                Text="Exhange" 
                 Clicked="EurClicked"
                 HorizontalOptions="Fill" />
-            <Button
-                x:Name="USD"
-                Text="USD" 
-                Clicked="UsClicked"
-                HorizontalOptions="Fill" />
+            <Entry
+                x:Name="EntryValue"/>
             <Label
                 x:Name="KursUsd"/>
         </VerticalStackLayout>
