@@ -11,7 +11,6 @@
             <Label
                 x:Name="Head"
                 Text="Kurs NBP"
-                Style="{StaticResource Headline}"
                 SemanticProperties.HeadingLevel="Level1" />
             <DatePicker
                 x:Name="Date"/>
@@ -20,14 +19,12 @@
                 Text="Exhange" 
                 Clicked="EurClicked"
                 HorizontalOptions="Fill" />
-            <Entry
-                x:Name="EntryValue"
-                Placeholder="Nazwa waluty"/>
-            <Entry
-                x:Name="EntryValueToCompare"
-                Placeholder="Nazwa waluty"/>
             <Entry x:Name="Value"
                    Placeholder="wartość"/>
+            <Label
+                x:Name="Raport"
+                Text="WYNIK BITCOINA"
+                SemanticProperties.HeadingLevel="Level1" />
         </VerticalStackLayout>
     </ScrollView>
 

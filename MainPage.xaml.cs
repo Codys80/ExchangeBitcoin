@@ -20,10 +20,57 @@ namespace waluty
         public double? bid { get; set; }
         public double? ask { get; set; }
     }
+
+    public class BitCoin
+    {
+        public string? chartname { get; set; }
+        public BPI bpi { get; set; }
+    }
+    public class BPI
+    {
+        public BitRate USD { get; set; }
+        public BitRate GBP { get; set; }
+        public BitRate EUR { get; set; }
+
+    }
+    public class BitRate
+    {
+        public string code { get; set; }
+        public string symbol { get; set; }        
+        public string rate { get; set; }
+        public string description { get; set; }
+        public double rate_float { get; set; }
+    }
     public partial class MainPage : ContentPage
     {
+        public Currency createCurrency(string input)
+        {
+            string dateToday = Date.Date.ToString("yyyy-MM-dd");
+            string url = $"https://api.nbp.pl/api/exchangerates/rates/c/{input}/{dateToday}/?format=json";
+            string json;
+
+            using (var webClient = new WebClient())
+            {
+                json = webClient.DownloadString(url);
+            }
+            Currency c = JsonSerializer.Deserialize<Currency>(json);
+            return c;
+        }
+        public BitCoin createCurrency(int a) //przysłonięta wersja dla bitcoina
+        {
+            string url = "https://api.coindesk.com/v1/bpi/currentprice.json";
+            string json;
+
+            using (var webClient = new WebClient())
+            {
+                json = webClient.DownloadString(url);
+            }
+            BitCoin c = JsonSerializer.Deserialize<BitCoin>(json);
+
+            return c;
+        }
+            
         string waluta, compare;
-       
         public MainPage()
         {
             InitializeComponent();
@@ -32,36 +79,37 @@ namespace waluty
         }
         private void EurClicked(object sender, EventArgs e)
         {
-            waluta = EntryValue.Text;
-            compare = EntryValueToCompare.Text;
+            //waluta = EntryValue.Text;
+            //compare = EntryValueToCompare.Text;
             double value = double.Parse(Value.Text);
-            string dateToday = Date.Date.ToString("yyyy-MM-dd");
-            string url = $"https://api.nbp.pl/api/exchangerates/rates/c/{waluta}/{dateToday}/?format=json";
-            string json1, json2;
-            
-            using (var webClient = new WebClient())
-            {
-                json1 = webClient.DownloadString(url);
-            }
-            url = $"https://api.nbp.pl/api/exchangerates/rates/c/{compare}/{dateToday}/?format=json";
-            using (var webClient = new WebClient())
-            {
-                json2 = webClient.DownloadString(url);
-            }
-            Currency c = JsonSerializer.Deserialize<Currency>(json1);
-            Currency cc = JsonSerializer.Deserialize<Currency>(json2);
-            double exchangeRate;
-            exchangeRate = Convert.ToDouble(c.rates[0].bid)/ Convert.ToDouble(cc.rates[0].bid);
-            value *= exchangeRate;
-            string s = $"Nazwa wymiany: {c.currency} / {cc.currency} \n"; 
-            s += $"Wartość: ${value}";
-            //s += $"Kod waluty: {c.code}\n";
-            //s += $"Date: {c.rates[0].effectiveDate}\n";
-            //s += $"Cena Skupu: {c.rates[0].bid - cc.rates[0].bid} zł\n";
-            //s += $"Cena sprzedaży: {c.rates[0].ask - cc.rates[0].ask} zł\n";
+
+            //Currency PLN = createCurrency("PLN");
+            double PLN = value;
+            Currency USD = createCurrency("USD");
+            Currency EUR = createCurrency("EUR");
+            BitCoin BIT = createCurrency(0);
 
 
+            //Currency cc = createCurrency(compare);
+            //double exchangeRate;
+            //exchangeRate = Convert.ToDouble(BIT.rates[0].bid)/ Convert.ToDouble(EUR.rates[0].bid);
+            //value *= exchangeRate;
+            string s = $"Nazwa waluty: PLN - Kurs: 1\n";
+            s += $"Nazwa waluty: {USD.currency} - Kurs: {USD.rates[0].bid}\n";
+            s += $"Nazwa waluty: {EUR.currency} - Kurs: {EUR.rates[0].bid}\n";
+            value *= BIT.bpi.EUR.rate_float;
+            string r = $"Przeliczenie Bitcoina w EUR: {value}\n";
+            value = double.Parse(Value.Text);
+
+            value *= BIT.bpi.USD.rate_float;
+            r += $"Przeliczenie Bitcoina w USD: {value}\n";
+            value = double.Parse(Value.Text);
+
+            double bitcoinRate = 273532.7349;
+            value *= bitcoinRate;
+            r += $"Przeliczenie Bitcoina w PLN: {value}\n";
             Head.Text = s;
+            Raport.Text = r;
         }
     }
 }
